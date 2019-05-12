@@ -1,0 +1,70 @@
+# a comment
+Bool: true
+Int8: -1
+Int16: -23
+Int32: -1234
+Int64: -12039102391123
+Uint8: 1
+Uint16: 10000
+Uint32: 23123123
+Uint64: 1029301239123
+Float32: 1.234
+Float64: 1.33333333333333333333333333
+Byte: 1
+Bytes: aGVsbG8gd29ybGQhCg==
+Uint: 12123123
+Int: -12312312
+String: hi this is a test
+BoolList:
+	- true
+	- false
+	- true
+	- true
+IntList:
+	- 1
+	- 2
+	- 3
+	- 4
+StringList:
+	- hi
+	- this
+	- is a test!
+	- next is the empty string
+	- 
+StringListList:
+	-
+		- 1
+		- 2
+		- c
+	-
+		- a nested
+		- list
+Struct:
+	Int: 123
+	String: Oink
+	List:
+		- lala
+		- flierp
+	StructList:
+		-
+			Int: 321
+			String: another!
+		-
+			Int: 123
+			String: last
+	Struct:
+		Int: 222
+IntPointer: 1
+StructPointer:
+	Bool: false
+StringListPointer:
+	- no
+	- more
+	- typing
+	- please
+ListStringPointer:
+	- ah
+	- there
+	- is
+	- one
+	- more
