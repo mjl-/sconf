@@ -7,7 +7,8 @@ is inspired by JSON and yaml, but easier to write and use correctly.
 Sconf goals:
 
 	- Make the application self-documenting about its configuration requirements.
-	- Require full configuration of an application via a config file, finding mistakes by the operator.
+	- Require full configuration of an application via a config file, finding
+	  mistakes by the operator.
 	- Make it easy to write a correct config file, no surprises.
 
 Workflow for using this package:
