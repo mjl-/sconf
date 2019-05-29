@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/mjl-/xfmt"
 )
 
 type writeError error
@@ -56,17 +58,19 @@ func (w *writer) describeStruct(v reflect.Value) {
 		doc := f.Tag.Get("sconf-doc")
 		optional := isOptional(f.Tag.Get("sconf"))
 		if doc != "" || optional {
-			w.write(w.prefix)
-			w.write("# ")
-			w.write(doc)
+			s := w.prefix + "# " + doc
 			if optional {
 				opt := "(optional)"
 				if doc != "" {
 					opt = " " + opt
 				}
-				w.write(opt)
+				s += opt
 			}
-			w.write("\n")
+			s += "\n"
+			b := &strings.Builder{}
+			err := xfmt.Format(b, strings.NewReader(s), xfmt.Config{MaxWidth: 80})
+			w.check(err)
+			w.write(b.String())
 		}
 		w.write(w.prefix)
 		w.write(f.Name + ":")
