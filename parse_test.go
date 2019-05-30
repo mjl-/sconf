@@ -124,12 +124,21 @@ func TestParse(t *testing.T) {
 
 	// Test for unsupported types.
 	var config2 struct {
-		c complex128
+		C complex128
 	}
-	err := Parse(strings.NewReader("c: 123"), &config2)
+	err := Parse(strings.NewReader("C: 123"), &config2)
 	if err == nil {
 		t.Errorf("expected error for unsupported complex type")
 	} else if err.Error() != ":1: cannot parse type complex128" {
 		t.Errorf("unexpected error, got %q, expected %q", err.Error(), ":1: cannot parse type complex128")
+	}
+
+	// Test attempt to parse into non-pointer.
+	var config3 struct {
+		S string
+	}
+	err = Parse(strings.NewReader("S: test"), config3)
+	if err == nil {
+		t.Errorf("got nil, expected error parsing into non-pointer")
 	}
 }

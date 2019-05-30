@@ -5,6 +5,26 @@ import (
 	"testing"
 )
 
+var config = struct {
+	Bool   bool
+	Float  float64
+	Name   string `sconf:"optional"`
+	Int    int    `sconf-doc:"Int is a ..." sconf:"optional"`
+	List   []string
+	Struct struct {
+		Word string
+	}
+	Ptr  *int `sconf:"optional"`
+	Ptr2 *int
+}{
+	Bool:   true,
+	Float:  1.23,
+	Name:   "gopher",
+	List:   []string{"two", "tone"},
+	Struct: struct{ Word string }{"word"},
+	Ptr2:   new(int),
+}
+
 func TestDescribe(t *testing.T) {
 	testBad := func(v interface{}, exp string) {
 		t.Helper()
@@ -53,22 +73,6 @@ func TestDescribe(t *testing.T) {
 		}
 	}
 
-	var config struct {
-		Bool   bool
-		Float  float64
-		Name   string `sconf:"optional"`
-		Int    int    `sconf-doc:"Int is a ..." sconf:"optional"`
-		List   []string
-		Struct struct {
-			Word string
-		}
-		Ptr *int
-	}
-	config.Bool = true
-	config.Float = 1.23
-	config.Name = "gopher"
-	config.List = []string{"two", "tone"}
-	config.Struct.Word = "word"
 	configExp := `Bool: true
 Float: 1.230000
 # (optional)
@@ -80,7 +84,29 @@ List:
 	- tone
 Struct:
 	Word: word
+# (optional)
 Ptr: 0
+Ptr2: 0
 `
 	testGood(&config, configExp)
+}
+
+func TestWrite(t *testing.T) {
+	writeExp := `Bool: true
+Float: 1.230000
+Name: gopher
+List:
+	- two
+	- tone
+Struct:
+	Word: word
+Ptr2: 0
+`
+	out := &bytes.Buffer{}
+	err := Write(out, &config)
+	if err != nil {
+		t.Errorf("unexpected error: %s", err)
+	} else if out.String() != writeExp {
+		t.Errorf("expected output:\n%s\n\nactual output:\n%s\n", writeExp, out.String())
+	}
 }
