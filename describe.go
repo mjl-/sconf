@@ -71,7 +71,7 @@ func (w *writer) describeStruct(v reflect.Value) {
 			doc := f.Tag.Get("sconf-doc")
 			optional := isOptional(f.Tag.Get("sconf"))
 			if doc != "" || optional {
-				s := w.prefix + "# " + doc
+				s := "\n" + w.prefix + "# " + doc
 				if optional {
 					opt := "(optional)"
 					if doc != "" {

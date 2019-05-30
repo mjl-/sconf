@@ -77,8 +77,10 @@ func TestDescribe(t *testing.T) {
 
 	configExp := `Bool: true
 Float: 1.230000
+
 # (optional)
 Name: gopher
+
 # Int is a ... (optional)
 Int: 0
 List:
@@ -86,6 +88,7 @@ List:
 	- tone
 Struct:
 	Word: word
+
 # (optional)
 Ptr: 0
 Ptr2: 0
