@@ -2,6 +2,7 @@ package sconf
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 )
 
@@ -14,8 +15,9 @@ var config = struct {
 	Struct struct {
 		Word string
 	}
-	Ptr  *int `sconf:"optional"`
-	Ptr2 *int
+	Ptr       *int `sconf:"optional"`
+	Ptr2      *int
+	EmptyList []string
 }{
 	Bool:   true,
 	Float:  1.23,
@@ -87,6 +89,8 @@ Struct:
 # (optional)
 Ptr: 0
 Ptr2: 0
+EmptyList:
+	- 
 `
 	testGood(&config, configExp)
 }
@@ -101,12 +105,36 @@ List:
 Struct:
 	Word: word
 Ptr2: 0
+EmptyList:
+	- nonempty
 `
+	config.EmptyList = []string{"nonempty"}
 	out := &bytes.Buffer{}
 	err := Write(out, &config)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err)
 	} else if out.String() != writeExp {
 		t.Errorf("expected output:\n%s\n\nactual output:\n%s\n", writeExp, out.String())
+	}
+	config.EmptyList = nil
+
+	var emptyList struct {
+		List []string
+	}
+	out = &bytes.Buffer{}
+	err = Write(out, &emptyList)
+	if err == nil {
+		t.Errorf("got nil, expected %s", errNoElem)
+	} else if !strings.Contains(err.Error(), errNoElem.Error()) {
+		t.Errorf("got %v, expected %v", err, errNoElem)
+	}
+
+	var emptyListOpt struct {
+		List []string `sconf:"optional"`
+	}
+	out = &bytes.Buffer{}
+	err = Write(out, &emptyListOpt)
+	if err != nil {
+		t.Errorf("got %v, expected nil err", err)
 	}
 }

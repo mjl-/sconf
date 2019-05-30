@@ -2,12 +2,15 @@ package sconf
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"reflect"
 	"strings"
 
 	"github.com/mjl-/xfmt"
 )
+
+var errNoElem = errors.New("no elements")
 
 type writeError error
 
@@ -17,9 +20,13 @@ type writer struct {
 	full   bool // If set, we also write default values and comments.
 }
 
+func (w *writer) error(err error) {
+	panic(writeError(err))
+}
+
 func (w *writer) check(err error) {
 	if err != nil {
-		panic(writeError(err))
+		w.error(err)
 	}
 }
 
@@ -129,10 +136,22 @@ func (w *writer) describeValue(v reflect.Value) {
 }
 
 func (w *writer) describeSlice(v reflect.Value) {
-	n := v.Len()
-	for i := 0; i < n; i++ {
+	describeElem := func(vv reflect.Value) {
 		w.write(w.prefix)
 		w.write("-")
-		w.describeValue(v.Index(i))
+		w.describeValue(vv)
+	}
+
+	n := v.Len()
+	if n == 0 {
+		if w.full {
+			describeElem(reflect.New(v.Type().Elem()))
+		} else {
+			w.error(errNoElem)
+		}
+	}
+
+	for i := 0; i < n; i++ {
+		describeElem(v.Index(i))
 	}
 }
