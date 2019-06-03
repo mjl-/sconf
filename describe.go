@@ -12,7 +12,7 @@ import (
 
 var errNoElem = errors.New("no elements")
 
-type writeError error
+type writeError struct{ error }
 
 type writer struct {
 	out    *bufio.Writer
@@ -21,7 +21,7 @@ type writer struct {
 }
 
 func (w *writer) error(err error) {
-	panic(writeError(err))
+	panic(writeError{err})
 }
 
 func (w *writer) check(err error) {
