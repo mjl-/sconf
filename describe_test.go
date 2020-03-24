@@ -65,6 +65,21 @@ func TestDescribe(t *testing.T) {
 	}
 	testBad(&badChan, "unsupported value chan")
 
+	var badString = struct {
+		String string
+	}{
+		"multi\nline\nstring",
+	}
+	testBad(&badString, "unsupported multiline string")
+
+	type mystring string
+	var badCustomString = struct {
+		String mystring
+	}{
+		"multi\nline\nstring",
+	}
+	testBad(&badCustomString, "unsupported multiline string")
+
 	testGood := func(v interface{}, exp string) {
 		out := &bytes.Buffer{}
 		err := Describe(out, v)
