@@ -24,13 +24,16 @@ func Parse(src io.Reader, dst interface{}) error {
 }
 
 // Describe writes an example sconf file describing v to w. The file includes all
-// fields and documentation on the fields as configured with the "sconf-doc" tags.
+// fields, values and documentation on the fields as configured with the "sconf"
+// and "sconf-doc" struct tags. Describe does not detect recursive values and will
+// attempt to write them.
 func Describe(w io.Writer, v interface{}) error {
 	return describe(w, v, true)
 }
 
-// Write writes a valid sconf file describing v to w, without comments and without
-// optional fields set to their zero values.
+// Write writes a valid sconf file describing v to w, without comments and with
+// missing optional fields set to their zero values. Write does not detect
+// recursive values and will attempt to write them.
 func Write(w io.Writer, v interface{}) error {
 	return describe(w, v, false)
 }
