@@ -46,6 +46,10 @@ type config1 struct {
 	}
 	StringListPointer *[]string
 	ListStringPointer []*string
+	Ignored           string `sconf:"ignore"`
+	Map               map[string]struct {
+		Word string
+	} `sconf:"optional"`
 }
 
 func TestParse(t *testing.T) {

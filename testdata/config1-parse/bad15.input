@@ -1,0 +1,5 @@
+Map:
+	dupkey:
+		Word: test
+	dupkey:
+		Word: other
