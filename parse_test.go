@@ -46,7 +46,7 @@ type config1 struct {
 	}
 	StringListPointer *[]string
 	ListStringPointer []*string
-	Ignored           string `sconf:"ignore"`
+	Ignored           string `sconf:"-"`
 	Map               map[string]struct {
 		Word string
 	} `sconf:"optional"`

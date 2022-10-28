@@ -54,7 +54,7 @@ func isOptional(sconfTag string) bool {
 }
 
 func isIgnore(sconfTag string) bool {
-	return hasTagWord(sconfTag, "ignore")
+	return hasTagWord(sconfTag, "-") || hasTagWord(sconfTag, "ignore")
 }
 
 func hasTagWord(sconfTag, word string) bool {

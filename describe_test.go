@@ -35,7 +35,7 @@ type testconfig struct {
 	List2    []string          `sconf:"optional"`
 	List3    []string          `sconf:"optional"`
 	Duration time.Duration
-	Ignore   string `sconf:"ignore"`
+	Ignore   string `sconf:"-"`
 }
 
 var config = testconfig{
@@ -47,13 +47,11 @@ var config = testconfig{
 	Struct: struct{ Word string }{"word"},
 	Ptr2:   new(int),
 	Map1:   map[string]bool{"a": true},
-	Map2:   map[string]struct{ Word string }{"x": struct{ Word string }{"x"}},
+	Map2:   map[string]struct{ Word string }{"x": {"x"}},
 	Map3: map[string]struct {
 		Word string `sconf:"optional"`
-	}{"x": struct {
-		Word string `sconf:"optional"`
-	}{""}},
-	Map4:     map[string]struct{ Word string }{"x": struct{ Word string }{""}},
+	}{"x": {""}},
+	Map4:     map[string]struct{ Word string }{"x": {""}},
 	Map5:     nil,
 	Map6:     map[string]string{},
 	List2:    []string{},
