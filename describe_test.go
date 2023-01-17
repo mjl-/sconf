@@ -2,6 +2,7 @@ package sconf
 
 import (
 	"bytes"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -313,5 +314,69 @@ Duration: 1s
 	}
 	if err := Parse(out, &emptyListOpt); err != nil {
 		t.Fatalf("parsing generated config: %v", err)
+	}
+}
+
+// Test that zero values, taking ignored into account, are properly ignored and
+// replaced by nil in a map when writing a config.
+func TestMapNil(t *testing.T) {
+	type Sub struct {
+		Other   string
+		Ignored string `sconf:"-"`
+	}
+	type Value struct {
+		Name    string         `sconf:"optional"`
+		Sub     Sub            `sconf:"optional"`
+		List    []Sub          `sconf:"optional"`
+		Map     map[string]Sub `sconf:"optional"`
+		Ignored string         `sconf:"-"`
+	}
+	type xconfig struct {
+		Map map[string]Value
+	}
+	config := xconfig{
+		Map: map[string]Value{
+			"a": {"", Sub{Ignored: "x"}, nil, nil, "test"},
+			"b": {"test", Sub{Ignored: "x"}, nil, nil, ""},
+			"c": {"test", Sub{Ignored: "x"}, nil, nil, "test"},
+			"d": {"test", Sub{Other: "test"}, nil, nil, "test"},
+		},
+	}
+	// Without the ignored fields.
+	expConfig := xconfig{
+		Map: map[string]Value{
+			"a": {"", Sub{}, nil, nil, ""},
+			"b": {"test", Sub{}, nil, nil, ""},
+			"c": {"test", Sub{}, nil, nil, ""},
+			"d": {"test", Sub{Other: "test"}, nil, nil, ""},
+		},
+	}
+	out := bytes.Buffer{}
+	err := Write(&out, config)
+	if err != nil {
+		t.Fatalf("write: %v", err)
+	}
+	got := out.String()
+	exp := `Map:
+	a: nil
+	b:
+		Name: test
+	c:
+		Name: test
+	d:
+		Name: test
+		Sub:
+			Other: test
+`
+	if got != exp {
+		t.Fatalf("got:\n%s\n\nexpected %s", got, exp)
+	}
+
+	var nconfig xconfig
+	if err := Parse(strings.NewReader(exp), &nconfig); err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	if !reflect.DeepEqual(nconfig, expConfig) {
+		t.Fatalf("parse: got %#v, expected %#v", nconfig, expConfig)
 	}
 }

@@ -83,7 +83,7 @@ func (w *writer) describeMap(v reflect.Value) {
 		w.write(w.prefix)
 		w.write(k.String() + ":")
 		mv := v.MapIndex(k)
-		if !w.keepZero && isEmptyStruct(mv) {
+		if !w.keepZero && mv.Kind() == reflect.Struct && isEmptyStruct(mv) {
 			w.write(" nil\n")
 			continue
 		}
@@ -100,36 +100,51 @@ func (w *writer) describeMap(v reflect.Value) {
 // whether v is a zero value of a struct type with all fields optional or
 // ignored, causing it to write nothing when using Write.
 func isEmptyStruct(v reflect.Value) bool {
-	if v.Kind() != reflect.Struct || !v.IsZero() {
-		return false
+	if v.Kind() != reflect.Struct {
+		panic("not a struct")
 	}
 	t := v.Type()
 	n := t.NumField()
 	for i := 0; i < n; i++ {
 		ft := t.Field(i)
 		tag := ft.Tag.Get("sconf")
-		if !isIgnore(tag) && !isOptional(tag) {
+		if isIgnore(tag) {
+			continue
+		}
+		if !isOptional(tag) {
 			return false
 		}
-		if ft.Type.Kind() == reflect.Struct {
-			if !isEmptyStruct(v.Field(i)) {
-				return false
-			}
+		if !isZeroIgnored(v.Field(i)) {
+			return false
 		}
 	}
 	return true
 }
 
-// whether v is its types zero value, or an instance of length 0.
-func isZero(v reflect.Value) bool {
-	if v.IsZero() {
-		return true
-	}
+// whether v is zero, taking ignored values into account.
+func isZeroIgnored(v reflect.Value) bool {
 	switch v.Kind() {
 	case reflect.Slice, reflect.Map:
 		return v.Len() == 0
+	case reflect.Ptr:
+		return v.IsZero() || isZeroIgnored(v.Elem())
+	case reflect.Struct:
+		t := v.Type()
+		n := t.NumField()
+		for i := 0; i < n; i++ {
+			ft := t.Field(i)
+			tag := ft.Tag.Get("sconf")
+			if isIgnore(tag) {
+				continue
+			}
+			if !isZeroIgnored(v.Field(i)) {
+				return false
+			}
+		}
+		return true
+	default:
+		return v.IsZero()
 	}
-	return false
 }
 
 func (w *writer) describeStruct(v reflect.Value) {
@@ -141,7 +156,7 @@ func (w *writer) describeStruct(v reflect.Value) {
 		if isIgnore(f.Tag.Get("sconf")) {
 			continue
 		}
-		if !w.keepZero && isOptional(f.Tag.Get("sconf")) && isZero(fv) {
+		if !w.keepZero && isOptional(f.Tag.Get("sconf")) && isZeroIgnored(fv) {
 			continue
 		}
 		if w.docs {
