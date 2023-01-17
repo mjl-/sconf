@@ -46,7 +46,7 @@ var config = testconfig{
 	List:   []string{"two", "tone"},
 	Struct: struct{ Word string }{"word"},
 	Ptr2:   new(int),
-	Map1:   map[string]bool{"a": true},
+	Map1:   map[string]bool{"a": true, "b": true, "c": true},
 	Map2:   map[string]struct{ Word string }{"x": {"x"}},
 	Map3: map[string]struct {
 		Word string `sconf:"optional"`
@@ -150,6 +150,8 @@ EmptyList:
 	- 
 Map1:
 	a: true
+	b: true
+	c: true
 Map2:
 	x:
 		Word: x
@@ -197,6 +199,8 @@ EmptyList:
 	- nonempty
 Map1:
 	a: true
+	b: true
+	c: true
 Map2:
 	x:
 		Word: x
@@ -263,6 +267,8 @@ EmptyList:
 	- nonempty
 Map1:
 	a: true
+	b: true
+	c: true
 Map2:
 	x:
 		Word: x

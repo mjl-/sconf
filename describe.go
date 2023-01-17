@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 
 	"github.com/mjl-/xfmt"
@@ -72,14 +73,16 @@ func (w *writer) describeMap(v reflect.Value) {
 	if t.Key().Kind() != reflect.String {
 		w.error(fmt.Errorf("map key must be string"))
 	}
-	iter := v.MapRange()
+	keys := v.MapKeys()
+	sort.Slice(keys, func(i, j int) bool {
+		return keys[i].String() < keys[j].String()
+	})
 	have := false
-	for iter.Next() {
+	for _, k := range keys {
 		have = true
 		w.write(w.prefix)
-		k := iter.Key()
 		w.write(k.String() + ":")
-		mv := iter.Value()
+		mv := v.MapIndex(k)
 		if !w.keepZero && isEmptyStruct(mv) {
 			w.write(" nil\n")
 			continue
