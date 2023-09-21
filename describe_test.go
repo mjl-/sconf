@@ -37,6 +37,7 @@ type testconfig struct {
 	List3    []string          `sconf:"optional"`
 	Duration time.Duration
 	Ignore   string `sconf:"-"`
+	private  int
 }
 
 var config = testconfig{
@@ -59,6 +60,7 @@ var config = testconfig{
 	List3:    nil,
 	Duration: time.Second,
 	Ignore:   "ignored",
+	private:  1,
 }
 
 func TestDescribe(t *testing.T) {

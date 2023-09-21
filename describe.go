@@ -108,7 +108,7 @@ func isEmptyStruct(v reflect.Value) bool {
 	for i := 0; i < n; i++ {
 		ft := t.Field(i)
 		tag := ft.Tag.Get("sconf")
-		if isIgnore(tag) {
+		if !ft.IsExported() || isIgnore(tag) {
 			continue
 		}
 		if !isOptional(tag) {
@@ -134,7 +134,7 @@ func isZeroIgnored(v reflect.Value) bool {
 		for i := 0; i < n; i++ {
 			ft := t.Field(i)
 			tag := ft.Tag.Get("sconf")
-			if isIgnore(tag) {
+			if !ft.IsExported() || isIgnore(tag) {
 				continue
 			}
 			if !isZeroIgnored(v.Field(i)) {
@@ -153,7 +153,7 @@ func (w *writer) describeStruct(v reflect.Value) {
 	for i := 0; i < n; i++ {
 		f := t.Field(i)
 		fv := v.Field(i)
-		if isIgnore(f.Tag.Get("sconf")) {
+		if !f.IsExported() || isIgnore(f.Tag.Get("sconf")) {
 			continue
 		}
 		if !w.keepZero && isOptional(f.Tag.Get("sconf")) && isZeroIgnored(fv) {
