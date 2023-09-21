@@ -9,7 +9,7 @@ import (
 )
 
 type testconfig struct {
-	Bool   bool
+	Bool   bool `sconf-doc:"First comment.\n\n\nSecond section.\nWrapped line."`
 	Float  float64
 	Name   string `sconf:"optional"`
 	Int    int    `sconf-doc:"Int is a ..." sconf:"optional"`
@@ -129,7 +129,11 @@ func TestDescribe(t *testing.T) {
 		}
 	}
 
-	configExp := `Bool: true
+	configExp := `# First comment.
+
+
+# Second section. Wrapped line.
+Bool: true
 Float: 1.230000
 
 # (optional)
@@ -252,7 +256,11 @@ Duration: 1s
 }
 
 func TestWriteDocs(t *testing.T) {
-	writeExp := `Bool: true
+	writeExp := `# First comment.
+
+
+# Second section. Wrapped line.
+Bool: true
 Float: 1.230000
 
 # (optional)
