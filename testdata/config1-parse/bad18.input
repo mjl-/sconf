@@ -1,0 +1,7 @@
+Map:
+	mymap:
+		Word: x
+		List:
+			- test
+			# the next line starts with two tabs, followed by 8 spaces. the spaces would be considered part of a key in mymap.
+		        - f00f::1

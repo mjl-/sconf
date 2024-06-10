@@ -49,7 +49,9 @@ type config1 struct {
 	Ignored           string `sconf:"-"`
 	Map               map[string]struct {
 		Word string
+		List []string `sconf:"optional"`
 	} `sconf:"optional"`
+	Map2 map[string][]string `sconf:"optional"`
 }
 
 func TestParse(t *testing.T) {

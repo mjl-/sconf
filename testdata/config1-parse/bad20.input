@@ -1,0 +1,6 @@
+Map2:
+	k:
+		- a
+		# line below starts with tab and 8 spaces. "        - fe80" is seen as a key.
+		# the error message mentions mixed tab/space prefix as hint.
+	        - fe80

@@ -74,3 +74,11 @@ ListStringPointer:
 	- is
 	- one
 	- more
+
+Map2:
+	k:
+		- a
+		# the next line starts with a tab and 8 spaces. "        - b" is parsed as a key in Map2, with the next line ("\t\t-c") its value
+		# this only parses if for lines like "- b" if they end with a colon. otherwise a hintful error message is provided.
+	        - b:
+		- c
