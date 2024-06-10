@@ -226,19 +226,19 @@ func (p *parser) parseStruct0(v reflect.Value) {
 			if strings.TrimSpace(s) == "" {
 				more = " (perhaps stray whitespace)"
 			}
-			p.stop(fmt.Sprintf("missing colon for key/value on non-empty line %q%s", origs, more))
+			p.stop(fmt.Sprintf("missing colon for struct key/value on non-empty line %q%s", origs, more))
 		}
 		k := l[0]
 		if k == "" {
-			p.stop("empty key")
+			p.stop("empty key in struct")
 		}
 		if _, ok := seen[k]; ok {
-			p.stop("duplicate key")
+			p.stop("duplicate key in struct")
 		}
 		seen[k] = struct{}{}
 		s = l[1]
 		if s != "" && !strings.HasPrefix(s, " ") {
-			p.stop("missing space after colon")
+			p.stop("missing space after colon in struct")
 		}
 		if s != "" {
 			s = s[1:]
@@ -289,19 +289,19 @@ func (p *parser) parseMap0(v reflect.Value) {
 			if strings.TrimSpace(s) == "" {
 				more = " (perhaps stray whitespace)"
 			}
-			p.stop(fmt.Sprintf("missing colon for key/value on non-empty line %q%s", origs, more))
+			p.stop(fmt.Sprintf("missing colon for map key/value on non-empty line %q%s", origs, more))
 		}
 		k := l[0]
 		if k == "" {
-			p.stop("empty key")
+			p.stop("empty key in map")
 		}
 		if _, ok := seen[k]; ok {
-			p.stop("duplicate key")
+			p.stop("duplicate key in map")
 		}
 		seen[k] = struct{}{}
 		s = l[1]
 		if s != "" && !strings.HasPrefix(s, " ") {
-			p.stop("missing space after colon")
+			p.stop("missing space after colon in map")
 		}
 		if s != "" {
 			s = s[1:]

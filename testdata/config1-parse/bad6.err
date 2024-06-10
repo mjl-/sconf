@@ -1,1 +1,1 @@
-:1: missing colon for key/value on non-empty line "word"
+:1: missing colon for struct key/value on non-empty line "word"
