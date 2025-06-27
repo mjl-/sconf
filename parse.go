@@ -88,6 +88,11 @@ func (p *parser) next() bool {
 		p.line = strings.TrimSuffix(s, "\n")
 	}
 
+        // Substitute all leading sets of 4 spaces with tabs
+        for i := 0; strings.HasPrefix(p.line[i:], "    "); i++ {
+                p.line = p.line[:i] + "\t" + p.line[i+4:]
+        }
+
 	// Less indenting than expected. Let caller stop, returning to its caller for lower-level indent.
 	r := strings.HasPrefix(p.line, p.prefix)
 	return r
